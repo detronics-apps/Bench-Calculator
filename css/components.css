@@ -53,6 +53,7 @@
 
 .segmented {
   display: flex;
+  flex: 0 0 auto;
   gap: 2px;
   padding: 3px;
   background: var(--panel-2);
@@ -65,6 +66,8 @@
   font: inherit;
   font-weight: 500;
   flex: 1 1 0;
+  min-height: 34px;
+  line-height: 1.4;
   padding: 7px 10px;
   border: none;
   border-radius: 6px;

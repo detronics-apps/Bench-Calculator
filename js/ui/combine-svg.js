@@ -3,8 +3,8 @@
  *
  * The viewBox is sized to the network rather than fixed, so a two-component
  * chain is not marooned in the middle of a wide canvas behind long dead leads.
- * The stage scales whatever comes back to fit, so a tighter box simply renders
- * the components larger.
+ * The stage caps the drawing at its natural size, so a narrow canvas simply
+ * takes up less of the panel rather than being magnified to fill it.
  */
 
 import { svg } from './dom.js';
@@ -15,6 +15,7 @@ const WIRE = { stroke: 'var(--text-dim)', 'stroke-width': 2, fill: 'none', 'stro
 
 const BODY_W = 60;
 const MAX_WIDTH = 780;
+const MIN_WIDTH = 380;
 const LEAD = 46;
 const MAX_PITCH = 132;
 const MAX_SHOWN = 6;
@@ -113,7 +114,7 @@ function seriesNetwork(shown, kind, unit) {
   // would outgrow the canvas. The leads left over at each end stay short.
   const pitch = Math.min(MAX_PITCH, (MAX_WIDTH - LEAD * 2) / shown.length);
   const chain = pitch * shown.length;
-  const width = Math.min(MAX_WIDTH, chain + LEAD * 2);
+  const width = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, chain + LEAD * 2));
   const height = 152;
   const y = 66;
 
@@ -146,7 +147,7 @@ function seriesNetwork(shown, kind, unit) {
 }
 
 function parallelNetwork(shown, kind, unit) {
-  const width = 470;
+  const width = Math.max(MIN_WIDTH, 470);
   const rowStep = 62;
   const top = 46;
   const lastY = top + (shown.length - 1) * rowStep;

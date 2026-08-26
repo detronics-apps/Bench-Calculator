@@ -3,6 +3,19 @@
 All notable changes to the Detronics Electronics Bench.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.4.1] - 2026-08-27
+
+### Fixed
+- Diagrams were stretched to fill the panel, so a canvas sized to a small
+  circuit got magnified several times over on a wide screen - a single resistor
+  was drawn at 3.5x. Every drawing is now capped at its natural size, one
+  drawing unit to one pixel, so a six-branch circuit and a lone resistor are
+  drawn at the same scale. Narrow screens still shrink to fit, so phones are
+  unaffected.
+- The tool tabs and the diagram were squashed flat in a short browser window,
+  because flex items shrink by default and the column was compressing rather
+  than scrolling. Nothing in the viewport may shrink now; the panel scrolls.
+
 ## [1.4.0] - 2026-08-27
 
 ### Added
@@ -125,6 +138,7 @@ First release.
 - First-visit welcome modal with a quick start, plus licence and
   imprint/privacy modals.
 
+[1.4.1]: https://github.com/detronics-apps/Bench-Calculator/releases/tag/v1.4.1
 [1.4.0]: https://github.com/detronics-apps/Bench-Calculator/releases/tag/v1.4.0
 [1.3.0]: https://github.com/detronics-apps/Bench-Calculator/releases/tag/v1.3.0
 [1.2.0]: https://github.com/detronics-apps/Bench-Calculator/releases/tag/v1.2.0

@@ -94,8 +94,16 @@ body {
   overflow-y: auto;
 }
 
+/*
+ * Flex items shrink by default, so in a short window the browser was
+ * compressing the tab bar and the diagram rather than letting the column
+ * scroll. Nothing here may shrink: the stage grows into spare room, and
+ * everything else keeps the height its content needs.
+ */
+.viewport > * { flex: 0 0 auto; }
+
 .viewport__stage {
-  flex: 1 1 auto;
+  flex: 1 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -117,6 +125,7 @@ body {
   width: 100%;
   height: auto;
   display: block;
+  margin: 0 auto;
 }
 
 /* The palette strip that appears when a band is selected. */

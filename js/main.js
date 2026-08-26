@@ -293,6 +293,22 @@ function buildFooter() {
   ]);
 }
 
+/**
+ * Cap every diagram at its natural size.
+ *
+ * The canvases size themselves to their contents, so a one-component network
+ * produces a small one. Left to fill the panel it would be magnified several
+ * times over and look absurd next to a six-branch circuit. Pinning the maximum
+ * width to the viewBox keeps one drawing unit at one pixel, so everything is
+ * drawn at the same scale; narrower panels still shrink it to fit.
+ */
+function capDiagramScale(host) {
+  for (const node of host.querySelectorAll('svg[viewBox]')) {
+    const width = Number(node.getAttribute('viewBox').split(/\s+/)[2]);
+    if (Number.isFinite(width) && width > 0) node.style.maxWidth = `${Math.round(width)}px`;
+  }
+}
+
 /* ----------------------------------------------------------------- render */
 
 export function render(opts = {}) {
@@ -306,6 +322,7 @@ export function render(opts = {}) {
   }
 
   clear(dom.stage).appendChild(tool.stage(state, render));
+  capDiagramScale(dom.stage);
   renderReadout(tool.readout(state), tool, state);
   renderBanners(dom.banners, tool.warnings(state, render));
   renderExplainer(dom.explain, state);

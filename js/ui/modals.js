@@ -3,7 +3,7 @@
 import { el, clear } from './dom.js';
 import { markWelcomeSeen } from '../state.js';
 
-export const APP_VERSION = '1.4.0';
+export const APP_VERSION = '1.4.1';
 
 let root = null;
 let lastFocused = null;
@@ -68,6 +68,17 @@ export function openModal({ title, body, footer = [] }) {
 /* ------------------------------------------------------------ changelog */
 
 const CHANGELOG = [
+  {
+    version: '1.4.1',
+    date: '2026-08-27',
+    items: [
+      'Diagrams are no longer magnified to fill the panel on wide screens. A '
+        + 'one-component network was being blown up several times over; every drawing now '
+        + 'appears at the same scale whatever it contains.',
+      'Fixed the tool tabs and the diagram being squashed flat in a short browser window. '
+        + 'The panel scrolls instead.',
+    ],
+  },
   {
     version: '1.4.0',
     date: '2026-08-27',
