@@ -1,0 +1,11 @@
+node_modules/
+
+# OS and editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+
+# Local scratch
+scratch/
+*.local.json

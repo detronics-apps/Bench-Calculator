@@ -1,0 +1,11 @@
+{
+  "name": "detronics-bench-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Client-side bench calculator: resistor codes, SMD markings, LED circuits, batteries and passive networks.",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "serve": "python -m http.server 8080"
+  }
+}

@@ -1,0 +1,62 @@
+/*
+ * The printable label sheet. It is built into the page but hidden on screen;
+ * printing swaps the app chrome out for it.
+ */
+
+.print-sheet { display: none; }
+
+@media print {
+  :root {
+    --panel: #ffffff;
+    --panel-2: #ffffff;
+    --bg: #ffffff;
+    --text: #000000;
+    --text-dim: #333333;
+    --text-faint: #555555;
+    --border: #999999;
+  }
+
+  .app-header, .app-main, .app-footer, .modal-backdrop, .toast { display: none !important; }
+
+  body { background: #ffffff; display: block; }
+
+  .print-sheet { display: block; padding: 0; }
+
+  .print-sheet__head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 10mm;
+    padding-bottom: 3mm;
+    border-bottom: 1px solid #000000;
+  }
+
+  .print-sheet__title { font-size: 14pt; font-weight: 700; margin: 0; }
+  .print-sheet__meta { font-size: 8pt; color: #555555; margin-left: auto; }
+
+  .print-sheet__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4mm;
+  }
+
+  .label {
+    border: 1px solid #000000;
+    border-radius: 2mm;
+    padding: 3mm;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    min-height: 22mm;
+    display: flex;
+    flex-direction: column;
+    gap: 2mm;
+  }
+
+  .label__value { font-size: 13pt; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .label__sub { font-size: 8pt; color: #333333; }
+  .label__name { font-size: 8pt; font-weight: 600; }
+
+  .label svg { width: 100%; height: auto; max-height: 12mm; margin-top: auto; }
+
+  @page { margin: 12mm; }
+}

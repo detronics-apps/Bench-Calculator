@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "detronics",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8842"],
+      "port": 8842
+    }
+  ]
+}

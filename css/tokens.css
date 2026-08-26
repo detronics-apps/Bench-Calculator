@@ -1,0 +1,130 @@
+/*
+ * Design tokens, built from the Detronics palette:
+ * #1f2d3d navy - #7fabc7 blue - #d7e5f2 pale - #e9eaec light - #454b52 slate
+ * - #cdd1d2 grey.
+ *
+ * Light is the base. Dark is redefined twice: once behind prefers-color-scheme
+ * for viewers who never touch the toggle, and once behind [data-theme] so the
+ * toggle wins in both directions.
+ */
+
+:root {
+  color-scheme: light;
+
+  --bg: #e9eaec;
+  --panel: #ffffff;
+  --panel-2: #f4f6f8;
+  --panel-3: #e6ebf0;
+  --border: #cdd1d2;
+  --border-strong: #adb5bd;
+
+  --text: #1f2d3d;
+  --text-dim: #454b52;
+  --text-faint: #6b737b;
+
+  /* #7fabc7 is only ~2.3:1 on white, so it fills and outlines here but never
+     carries text; --accent-strong is the darkened variant that does. */
+  --accent: #7fabc7;
+  --accent-strong: #2f6e94;
+  --accent-soft: #d7e5f2;
+  --accent-ink: #ffffff;
+
+  --ok: #1f7a3d;
+  --ok-soft: #e2f2e7;
+  --warn: #8a5a00;
+  --warn-soft: #fdf0d8;
+  --danger: #a32020;
+  --danger-soft: #fbe4e4;
+
+  --shadow-sm: 0 1px 2px rgb(31 45 61 / 8%);
+  --shadow-md: 0 4px 16px rgb(31 45 61 / 12%);
+  --shadow-lg: 0 12px 40px rgb(31 45 61 / 22%);
+
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 14px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  --header-h: 56px;
+  --sidebar-w: 372px;
+
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --bg: #131c26;
+    --panel: #1f2d3d;
+    --panel-2: #263749;
+    --panel-3: #2f4256;
+    --border: #364b61;
+    --border-strong: #4a6480;
+
+    --text: #e9eaec;
+    --text-dim: #cdd1d2;
+    --text-faint: #94a2b1;
+
+    --accent: #7fabc7;
+    --accent-strong: #9cc4dc;
+    --accent-soft: #2a3f54;
+    --accent-ink: #12202c;
+
+    --ok: #6ed08c;
+    --ok-soft: #1d3527;
+    --warn: #e8b45c;
+    --warn-soft: #3a2f18;
+    --danger: #f08a8a;
+    --danger-soft: #3b2020;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
+    --shadow-md: 0 4px 16px rgb(0 0 0 / 45%);
+    --shadow-lg: 0 12px 40px rgb(0 0 0 / 55%);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #131c26;
+  --panel: #1f2d3d;
+  --panel-2: #263749;
+  --panel-3: #2f4256;
+  --border: #364b61;
+  --border-strong: #4a6480;
+
+  --text: #e9eaec;
+  --text-dim: #cdd1d2;
+  --text-faint: #94a2b1;
+
+  --accent: #7fabc7;
+  --accent-strong: #9cc4dc;
+  --accent-soft: #2a3f54;
+  --accent-ink: #12202c;
+
+  --ok: #6ed08c;
+  --ok-soft: #1d3527;
+  --warn: #e8b45c;
+  --warn-soft: #3a2f18;
+  --danger: #f08a8a;
+  --danger-soft: #3b2020;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 45%);
+  --shadow-lg: 0 12px 40px rgb(0 0 0 / 55%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
