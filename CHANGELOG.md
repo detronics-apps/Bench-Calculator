@@ -1,7 +1,31 @@
 # Changelog
 
-All notable changes to the Detronics Bench Calculator.
+All notable changes to the Detronics Electronics Bench.
 This project follows [Semantic Versioning](https://semver.org/).
+
+## [1.4.0] - 2026-08-27
+
+### Added
+- A **"How this works"** panel under every tool. It explains what the component
+  is and why the tool exists in plain language, gives the formula, then works
+  that formula through using the values currently on screen - so the arithmetic
+  can be checked by hand. Aimed at someone meeting this for the first time.
+
+### Changed
+- Renamed from "Bench Calculator" to **Electronics Bench**, since it is becoming
+  a suite rather than one calculator.
+- Circuit diagrams size their canvas to the circuit and centre it, rather than
+  drawing into a fixed 760-wide box. A single LED now renders in 380 units
+  instead of 760, so it appears at twice the size.
+
+### Fixed
+- Info tooltips were clipped by the sidebar's scroll container, so long ones were
+  cut off mid-sentence. The bubble now lives on `<body>` and is positioned in
+  viewport coordinates, which nothing can clip.
+- On phones the Save and Load buttons overlapped the logo. Header labels now
+  shorten below 700px and the logo yields space first.
+- The supply label ran past the left edge of the canvas and was cut off in
+  exported PNGs. The pack name has moved to the caption, where there is room.
 
 ## [1.3.0] - 2026-08-26
 
@@ -101,6 +125,7 @@ First release.
 - First-visit welcome modal with a quick start, plus licence and
   imprint/privacy modals.
 
+[1.4.0]: https://github.com/detronics-apps/Bench-Calculator/releases/tag/v1.4.0
 [1.3.0]: https://github.com/detronics-apps/Bench-Calculator/releases/tag/v1.3.0
 [1.2.0]: https://github.com/detronics-apps/Bench-Calculator/releases/tag/v1.2.0
 [1.1.0]: https://github.com/detronics-apps/Bench-Calculator/releases/tag/v1.1.0

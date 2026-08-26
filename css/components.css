@@ -292,13 +292,10 @@
 .info:hover, .info:focus-visible { border-color: var(--accent-strong); color: var(--accent-strong); }
 
 .info__bubble {
-  position: absolute;
-  z-index: 40;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
+  position: fixed;
+  z-index: 300;
   width: max-content;
-  max-width: 260px;
+  max-width: min(280px, calc(100vw - 24px));
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -313,9 +310,8 @@
   text-transform: none;
   white-space: normal;
   display: none;
+  pointer-events: none;
 }
-
-.info:hover .info__bubble, .info:focus-visible .info__bubble { display: block; }
 
 /* ------------------------------------------------------------ band table */
 
@@ -431,6 +427,124 @@
 .result__pair { font-family: var(--font-mono); font-size: 12px; }
 .result__err { margin-left: auto; color: var(--text-faint); font-size: 12px; }
 .result__err--exact { color: var(--ok); font-weight: 600; }
+
+/* --------------------------------------------------------- explain panel */
+
+.explain {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.explain__toggle {
+  font: inherit;
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: none;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.explain__toggle:hover { background: var(--panel-2); }
+
+.explain__chevron {
+  font-size: 15px;
+  line-height: 1;
+  color: var(--text-faint);
+  transition: transform 150ms ease;
+  align-self: center;
+}
+
+.explain[data-open="true"] .explain__chevron { transform: rotate(90deg); }
+
+.explain__title { font-weight: 650; }
+.explain__hint { font-size: 12px; color: var(--text-faint); margin-left: auto; }
+
+.explain__body-wrap {
+  padding: 0 var(--space-4) var(--space-5);
+  max-width: 68ch;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.explain[data-open="false"] .explain__body-wrap { display: none; }
+
+.explain__intro {
+  margin: 0 0 var(--space-4);
+  color: var(--text);
+  font-size: 15px;
+}
+
+.explain__block { margin-bottom: var(--space-4); }
+.explain__block:last-of-type { margin-bottom: var(--space-3); }
+
+.explain__heading {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
+  margin: 0 0 var(--space-2);
+}
+
+.explain__body { margin: 0 0 var(--space-2); color: var(--text-dim); }
+
+.explain__formula {
+  margin: var(--space-2) 0;
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--panel-2);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+  overflow-x: auto;
+}
+
+.explain__example {
+  margin: var(--space-2) 0 0;
+  padding: var(--space-2) var(--space-3) var(--space-2) calc(var(--space-4) + 8px);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  list-style: none;
+  counter-reset: step;
+}
+
+.explain__example li {
+  position: relative;
+  margin-bottom: var(--space-1);
+  font-size: 13px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.explain__example li::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-strong);
+}
+
+.explain__example li:last-child { margin-bottom: 0; }
+
+.explain__footnote {
+  margin: var(--space-4) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-faint);
+}
 
 /* ---------------------------------------------------------------- modals */
 

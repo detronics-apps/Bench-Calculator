@@ -1,4 +1,4 @@
-# Detronics Bench Calculator
+# Detronics Electronics Bench
 
 **Live: https://detronics-apps.github.io/Bench-Calculator/**
 
@@ -11,6 +11,10 @@ no dependencies, no network requests once the page has loaded.
 | **SMD Code** | 3-digit, 4-digit and EIA-96 markings, decoded and encoded, with auto-detection. |
 | **LED Resistor** | Sizes the series resistor for one LED, a series string, or a parallel group wired per-branch or behind one shared resistor. Every LED is editable on its own, and the supply can be a plain voltage, a pack built from loose cells, or a named pack product with an expected runtime. |
 | **Combinations** | Resistors, capacitors and inductors in series or parallel, plus a solver that searches E-series pairs for a target value. |
+
+Every tool carries a **"How this works"** panel explaining the concepts in plain
+language, giving the formula, and working that formula through with whatever
+values are currently on screen.
 
 Everything is snapped against a selectable E-series (E6 → E192, E24 by default),
 and contextual banners appear live whenever a value crosses something worth
@@ -66,6 +70,7 @@ js/battery.js         cells, packs, named pack products, and runtime estimates
 js/combine.js         series/parallel laws and the target pair search
 js/state.js           one state object, localStorage, URL-hash sharing
 js/main.js            chrome, tool routing, rendering
+js/ui/explain.js      the teaching panel under each tool
 js/ui/                DOM helpers, SVG renderers, sidebar, export, modals
 js/ui/tools/          one controller per tool
 tests/                node --test over the pure modules

@@ -243,7 +243,7 @@ export function loadProject(text) {
     return { ok: false, error: 'That file is not valid JSON.' };
   }
   if (parsed?.format !== 'detronics-resistor-calculator') {
-    return { ok: false, error: 'That is not a Detronics Bench Calculator project file.' };
+    return { ok: false, error: 'That is not a Detronics Electronics Bench project file.' };
   }
   state = hydrate(parsed.state);
   persist();

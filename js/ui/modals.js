@@ -3,7 +3,7 @@
 import { el, clear } from './dom.js';
 import { markWelcomeSeen } from '../state.js';
 
-export const APP_VERSION = '1.3.0';
+export const APP_VERSION = '1.4.0';
 
 let root = null;
 let lastFocused = null;
@@ -69,6 +69,20 @@ export function openModal({ title, body, footer = [] }) {
 
 const CHANGELOG = [
   {
+    version: '1.4.0',
+    date: '2026-08-27',
+    items: [
+      'Renamed to Electronics Bench, since more bench tools are coming.',
+      'Every tool now has a "How this works" panel underneath it: the concepts in plain '
+        + 'language, the formulas, and the same formulas worked through with whatever '
+        + 'numbers are on your screen.',
+      'Fixed info tooltips being clipped behind the main panel.',
+      'Fixed the header buttons sitting on top of the logo on phones.',
+      'Circuit diagrams size themselves to the circuit instead of a fixed width, and the '
+        + 'supply label no longer runs off the left edge when exported.',
+    ],
+  },
+  {
     version: '1.3.0',
     date: '2026-08-26',
     items: [
@@ -119,7 +133,7 @@ export function openWelcome({ firstVisit = false } = {}) {
   const dontShow = el('input', { type: 'checkbox', id: 'welcome-dismiss', checked: firstVisit });
 
   openModal({
-    title: 'Detronics Bench Calculator',
+    title: 'Detronics Electronics Bench',
     body: [
       el('p', {
         text: 'Four calculators for the electronics bench, all running locally in your browser. '

@@ -6,6 +6,7 @@
 import { el, clear, $, select, field, toast, download } from './ui/dom.js';
 import { section } from './ui/sidebar.js';
 import { renderBanners } from './ui/warnings.js';
+import { renderExplainer } from './ui/explain.js';
 import { benchSection, addToBench, buildPrintSheet } from './ui/bench.js';
 import { exportPng, exportSvg, copyShareLink } from './ui/export.js';
 import {
@@ -48,6 +49,12 @@ const THEME_ICON = { system: '◐', light: '☀', dark: '☾' };
 
 /* ---------------------------------------------------------------- header */
 
+/** A button whose label shortens on narrow screens. */
+const dualLabel = (long, short) => [
+  el('span', { class: 'btn-label btn-label--long', text: long }),
+  el('span', { class: 'btn-label btn-label--short', text: short }),
+];
+
 function buildHeader() {
   const themeBtn = el('button', {
     class: 'btn btn--ghost btn--icon',
@@ -78,13 +85,12 @@ function buildHeader() {
     el('div', { class: 'brand' }, [
       el('img', { class: 'brand__logo', src: 'assets/logo.png', alt: 'Detronics' }),
       el('span', { class: 'brand__sep', 'aria-hidden': 'true' }),
-      el('span', { class: 'brand__tool', text: 'Bench Calculator' }),
+      el('span', { class: 'brand__tool', text: 'Electronics Bench' }),
     ]),
     el('div', { class: 'header-actions' }, [
       el('button', {
         class: 'btn',
         type: 'button',
-        text: 'Save project',
         title: 'Download everything - settings and bench list - as a JSON file',
         on: {
           click: () => {
@@ -93,13 +99,13 @@ function buildHeader() {
             toast('Project saved to your downloads');
           },
         },
-      }),
+      }, dualLabel('Save project', 'Save')),
       el('button', {
         class: 'btn',
         type: 'button',
-        text: 'Load project',
+        title: 'Open a project file you saved earlier',
         on: { click: () => fileInput.click() },
-      }),
+      }, dualLabel('Load project', 'Load')),
       fileInput,
       themeBtn,
       el('a', {
@@ -107,9 +113,8 @@ function buildHeader() {
         href: 'https://github.com/detronics-apps/Bench-Calculator',
         target: '_blank',
         rel: 'noopener noreferrer',
-        text: 'Source',
         title: 'Source code on GitHub',
-      }),
+      }, dualLabel('Source', 'Code')),
     ]),
   ]);
 }
@@ -130,6 +135,7 @@ function buildViewport() {
   dom.stage = el('div', { class: 'viewport__stage', id: 'stage' });
   dom.readout = el('div', { class: 'readout', id: 'readout' });
   dom.banners = el('div', { class: 'banners', id: 'banners' });
+  dom.explain = el('div', { class: 'explain-host', id: 'explain' });
 
   for (const tool of TOOLS) {
     dom.tabs.appendChild(el('button', {
@@ -145,7 +151,7 @@ function buildViewport() {
     ]));
   }
 
-  return el('section', { class: 'viewport' }, [dom.tabs, dom.stage, dom.readout, dom.banners]);
+  return el('section', { class: 'viewport' }, [dom.tabs, dom.stage, dom.readout, dom.banners, dom.explain]);
 }
 
 function renderReadout(spec, tool, state) {
@@ -302,6 +308,7 @@ export function render(opts = {}) {
   clear(dom.stage).appendChild(tool.stage(state, render));
   renderReadout(tool.readout(state), tool, state);
   renderBanners(dom.banners, tool.warnings(state, render));
+  renderExplainer(dom.explain, state);
   renderSidebar(tool, state);
   syncTheme();
 

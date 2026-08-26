@@ -184,6 +184,9 @@ body {
   flex-wrap: wrap;
 }
 
+/* Long/short label pairs, swapped by the responsive rules below. */
+.btn-label--short { display: none; }
+
 /* ------------------------------------------------------------ responsive */
 
 @media (max-width: 1040px) {
@@ -201,8 +204,26 @@ body {
   body { height: auto; }
 }
 
+@media (max-width: 700px) {
+  /* The full labels cannot fit beside the logo, so shorten them. */
+  .btn-label--long { display: none; }
+  .btn-label--short { display: inline; }
+}
+
 @media (max-width: 560px) {
   .brand__tool, .brand__sep { display: none; }
-  .app-header { gap: var(--space-2); }
   .viewport { padding: var(--space-3); }
+
+  /* Give every part of the header permission to shrink, and let the logo be
+     the first thing to give way - it is decorative next to the controls. */
+  .app-header {
+    gap: var(--space-2);
+    padding: 0 var(--space-3);
+  }
+
+  .brand { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+  .brand__logo { height: 22px; flex: 0 1 auto; min-width: 0; object-fit: contain; object-position: left center; }
+
+  .header-actions { flex: 0 0 auto; gap: var(--space-1); }
+  .header-actions .btn { padding: 6px 8px; }
 }

@@ -63,17 +63,83 @@ export function clear(node) {
 
 export const $ = (selector, root = document) => root.querySelector(selector);
 
+/*
+ * Info tooltips.
+ *
+ * The bubble cannot live inside the icon: the sidebar is a scroll container,
+ * and anything overflowing it gets clipped no matter how high its z-index is.
+ * Instead one shared bubble sits on <body> and is positioned in viewport
+ * coordinates, which no ancestor can clip.
+ */
+
+let bubble = null;
+let bubbleAnchor = null;
+
+function ensureBubble() {
+  if (!bubble) {
+    bubble = el('div', { class: 'info__bubble', role: 'tooltip' });
+    document.body.appendChild(bubble);
+    // A tooltip pinned to viewport coordinates goes stale the moment anything
+    // moves, so retire it rather than let it drift away from its icon.
+    for (const event of ['scroll', 'resize']) {
+      window.addEventListener(event, hideTooltip, true);
+    }
+  }
+  return bubble;
+}
+
+export function hideTooltip() {
+  if (bubble) bubble.style.display = 'none';
+  bubbleAnchor = null;
+}
+
+function showTooltip(anchor, text) {
+  const node = ensureBubble();
+  bubbleAnchor = anchor;
+  node.textContent = text;
+  node.style.display = 'block';
+  node.style.left = '0px';
+  node.style.top = '0px';
+
+  const a = anchor.getBoundingClientRect();
+  const b = node.getBoundingClientRect();
+  const margin = 8;
+
+  // Centre on the icon, then pull back inside the viewport at either edge.
+  const left = Math.min(
+    Math.max(margin, a.left + a.width / 2 - b.width / 2),
+    window.innerWidth - b.width - margin,
+  );
+  // Above by preference; below when there is no room up there.
+  const above = a.top - b.height - margin;
+  const top = above >= margin ? above : a.bottom + margin;
+
+  node.style.left = `${left}px`;
+  node.style.top = `${top}px`;
+}
+
 /** An inline info icon whose tooltip appears on hover and on keyboard focus. */
 export function infoIcon(text) {
-  return el('button', {
+  const icon = el('button', {
     class: 'info',
     type: 'button',
     'aria-label': text,
     tabindex: '0',
-  }, [
-    'i',
-    el('span', { class: 'info__bubble', role: 'tooltip', text }),
-  ]);
+    text: 'i',
+    on: {
+      mouseenter: () => showTooltip(icon, text),
+      mouseleave: () => hideTooltip(),
+      focus: () => showTooltip(icon, text),
+      blur: () => hideTooltip(),
+      click: (e) => {
+        // On touch there is no hover, so a tap toggles it.
+        e.preventDefault();
+        if (bubbleAnchor === icon) hideTooltip();
+        else showTooltip(icon, text);
+      },
+    },
+  });
+  return icon;
 }
 
 /** A labelled form field, optionally with an info icon and a hint line. */
