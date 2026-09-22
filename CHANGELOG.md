@@ -3,6 +3,35 @@
 All notable changes to the Detronics Electronics Bench.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.5.0] - 2026-09-22
+
+### Added
+- A **"How to use" tab**, the last tab. One search box over step-by-step how-tos
+  and FAQs, with an alias map so everyday wording finds the right page -
+  "how long will a battery last" reaches the runtime how-to. Filler words are
+  dropped from the query so AND-matching narrows without choking on grammar.
+- **Simple / Advanced / Expert** above the tabs. A display filter only: nothing
+  it hides changes a calculation. Simple shows 3 and 4-band codes and hides
+  Preferences and the bench list; Advanced shows everything; Expert adds the
+  "How this works" panel.
+- The logo links to **detronics.co.za**, and a **Buy me a coffee** button sits
+  beside the theme toggle.
+- An **"I am new here"** button in the footer, so the quick start is reachable
+  on every screen rather than only on a first visit.
+
+### Changed
+- The quick start no longer repeats the changelog - release notes belong behind
+  **What's new** - and it now offers to open the full guide.
+- Battery and pack specifications render as a single quiet panel instead of
+  rows that carried a border and read as clickable. The panel is Advanced and
+  above; Simple states the output voltage in a sentence; the full product
+  write-up and architecture diagram are Expert only.
+
+### Fixed
+- Wrapping the logo in a link broke the mobile header: the anchor became the
+  flex item and did not carry the shrink rules, so the action buttons sat back
+  on top of the wordmark.
+
 ## [1.4.1] - 2026-08-27
 
 ### Fixed

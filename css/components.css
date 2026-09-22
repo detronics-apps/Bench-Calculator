@@ -627,3 +627,122 @@
   font-size: 13px;
   box-shadow: var(--shadow-md);
 }
+
+/* ------------------------------------------------------------- mode bar */
+
+.modebar-host {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.modebar { display: flex; gap: var(--space-1); flex: 0 0 auto; }
+
+.modebar__hint {
+  font-size: 12px;
+  color: var(--text-faint);
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+/* ------------------------------------------------------- brand and coffee */
+
+.brand__home {
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.brand__home:hover { opacity: 0.85; }
+
+.coffee { font-size: 15px; line-height: 1; text-decoration: none; }
+.coffee:hover { background: var(--warn-soft); }
+
+/* ------------------------------------------------------------- spec panel */
+/* A spec sheet, not a set of controls: one quiet block, no per-row borders
+   so nothing in it reads as clickable. */
+
+.specs {
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel-2);
+  font-size: 13px;
+}
+
+.specs__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: 3px 0;
+}
+
+.specs__row + .specs__row { border-top: 1px solid var(--border); }
+
+.specs__label { color: var(--text-faint); flex: 1 1 auto; min-width: 0; }
+
+.specs__value {
+  color: var(--text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  flex: 0 0 auto;
+}
+
+.specs__value--accent { color: var(--accent-strong); }
+
+/* ----------------------------------------------------------------- guide */
+
+.guide { display: flex; flex-direction: column; gap: var(--space-4); max-width: 900px; }
+.guide__intro { margin: 0; color: var(--text-dim); max-width: 68ch; }
+.guide__search { font-size: 15px; padding: 10px 12px; }
+
+.guide__heading {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin: 0 0 var(--space-2);
+}
+
+.guide__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.guide__card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel-2);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.guide__card--faq { background: var(--panel); }
+.guide__cardTitle { margin: 0; font-size: 14px; font-weight: 650; }
+.guide__answer { margin: 0; font-size: 13px; color: var(--text-dim); }
+.guide__steps { margin: 0; padding-left: 1.2em; font-size: 13px; color: var(--text-dim); }
+.guide__steps li { margin-bottom: var(--space-1); }
+.guide__card .btn { align-self: flex-start; }
+.guide__empty { color: var(--text-dim); }
+
+.guide__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+/* The guide is a page of text: let it fill the stage and sit at the top. */
+.viewport__stage:has(.guide) { align-items: flex-start; justify-content: flex-start; }
+.viewport__stage .guide { max-width: 900px; }

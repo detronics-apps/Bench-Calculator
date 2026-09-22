@@ -9,7 +9,7 @@
 import { el, field, select, chips } from '../dom.js';
 import { section } from '../sidebar.js';
 import { renderLedCircuit } from '../led-svg.js';
-import { getState, setState } from '../../state.js';
+import { getState, setState, atLeast } from '../../state.js';
 import { LED_COLORS, ledColorById, solveLed, supplyCurrentAt } from '../../led.js';
 import {
   CELLS, cellById, buildPack, PACK_PRODUCTS, productById, buildProductPack,
@@ -218,6 +218,22 @@ function warnings(state) {
   return out;
 }
 
+/**
+ * A pack's specifications as a single quiet panel.
+ *
+ * These were rows of `.result`, which carry a border and read as clickable.
+ * Nothing here is clickable - it is a spec sheet, so it should look like one.
+ */
+const specPanel = (rows) => el('div', { class: 'specs' }, rows.filter(Boolean).map(
+  ([label, value, accent]) => el('div', { class: 'specs__row' }, [
+    el('span', { class: 'specs__label', text: label }),
+    el('span', {
+      class: `specs__value${accent ? ' specs__value--accent' : ''}`,
+      text: value,
+    }),
+  ]),
+));
+
 /* --------------------------------------------------------------- sections */
 
 function ledRow(index, led, rerender, { showLabel }) {
@@ -373,12 +389,19 @@ function batteryFields(state, rerender) {
       hint: b.capacityMah ? 'Your figure, overriding the typical one.' : 'Leave blank to use the typical figure.',
     }),
 
-    pack ? el('div', { class: 'results', style: { marginTop: '4px' } }, [
-      resultRow('Pack voltage', formatVolts(pack.nominalV)),
-      resultRow('Flat at', formatVolts(pack.cutoffV)),
-      resultRow('Pack capacity', `${pack.capacityMah} mAh`),
-      resultRow('Cells needed', `${pack.cellCount} × ${pack.cell.name}`),
-    ]) : el('p', { class: 'muted', text: 'That pack arrangement is not valid.' }),
+    pack && atLeast('advanced') ? specPanel([
+      ['Pack voltage', formatVolts(pack.nominalV), true],
+      ['Flat at', formatVolts(pack.cutoffV)],
+      ['Pack capacity', `${pack.capacityMah} mAh`],
+      ['Cells needed', `${pack.cellCount} × ${pack.cell.name}`],
+    ]) : null,
+
+    // Simple needs one number: what this pack gives the circuit.
+    pack && !atLeast('advanced')
+      ? el('p', { class: 'field__hint', text: `This pack supplies ${formatVolts(pack.nominalV)}.` })
+      : null,
+
+    pack ? null : el('p', { class: 'muted', text: 'That pack arrangement is not valid.' }),
   ];
 }
 
@@ -423,7 +446,9 @@ function productFields(state, rerender) {
       },
     )),
 
-    product ? el('p', {
+    // The full product write-up is background reading, not a control. It only
+    // earns its space for someone who came to learn how the thing works.
+    product && atLeast('expert') ? el('p', {
       class: 'field__hint',
       style: { marginBottom: '10px' },
       text: `${product.subtitle}. ${product.description}`,
@@ -437,9 +462,11 @@ function productFields(state, rerender) {
       + 'one holds its voltage but costs conversion efficiency, and the 3.3 V rail pays for '
       + 'two conversions because it hangs off the 5 V rail.' }) : null,
 
-    pack?.output ? el('p', { class: 'field__hint', text: pack.output.note }) : null,
+    pack?.output && atLeast('expert')
+      ? el('p', { class: 'field__hint', text: pack.output.note })
+      : null,
 
-    product?.architecture ? el('pre', {
+    product?.architecture && atLeast('expert') ? el('pre', {
       class: 'archdiagram',
       'aria-label': 'Power architecture',
       text: product.architecture.join(String.fromCharCode(10)),
@@ -449,24 +476,31 @@ function productFields(state, rerender) {
       hint: p.capacityMah ? 'Your figure, overriding the cell specification.' : 'Leave blank to use the cell specification.',
     }),
 
-    pack ? el('div', { class: 'results', style: { marginTop: '4px' } }, [
-      resultRow('Output', pack.regulated ? `${formatVolts(pack.outputV)} regulated` : `${formatVolts(pack.outputV)} nominal`),
-      pack.maxChargeV && !pack.regulated ? resultRow('Fully charged', formatVolts(pack.maxChargeV)) : null,
-      resultRow('Flat at', `${formatVolts(pack.cutoffV)} at the cells`),
-      resultRow('Capacity', `${pack.capacityMah} mAh`),
-      resultRow('Stored energy', `${Number(pack.energyWh.toPrecision(3))} Wh`),
-      resultRow('Usable at this output', `${Number(pack.usableWh.toPrecision(3))} Wh`,
-        { color: 'var(--accent-strong)' }),
-      resultRow('Path efficiency', `${Math.round(pack.efficiency * 100)}%`),
-      resultRow('Current limit', `${(pack.maxCurrentMa / 1000).toFixed(1)} A · ${pack.limitName}`),
-      resultRow('Cells', `${pack.cellCount} × ${pack.cell.name}`),
-    ].filter(Boolean)) : el('p', { class: 'muted', text: 'That pack could not be built.' }),
+    pack && atLeast('advanced') ? specPanel([
+      ['Output', pack.regulated
+        ? `${formatVolts(pack.outputV)} regulated`
+        : `${formatVolts(pack.outputV)} nominal`, true],
+      pack.maxChargeV && !pack.regulated ? ['Fully charged', formatVolts(pack.maxChargeV)] : null,
+      ['Flat at', `${formatVolts(pack.cutoffV)} at the cells`],
+      ['Capacity', `${pack.capacityMah} mAh`],
+      ['Stored energy', `${Number(pack.energyWh.toPrecision(3))} Wh`],
+      ['Usable at this output', `${Number(pack.usableWh.toPrecision(3))} Wh`],
+      ['Path efficiency', `${Math.round(pack.efficiency * 100)}%`],
+      ['Current limit', `${(pack.maxCurrentMa / 1000).toFixed(1)} A · ${pack.limitName}`],
+      ['Cells', `${pack.cellCount} × ${pack.cell.name}`],
+    ]) : null,
 
-    el('div', {
+    pack && !atLeast('advanced')
+      ? el('p', { class: 'field__hint', text: `This output supplies ${formatVolts(pack.outputV)}.` })
+      : null,
+
+    pack ? null : el('p', { class: 'muted', text: 'That pack could not be built.' }),
+
+    atLeast('expert') ? el('div', {
       class: 'field__hint',
       text: 'Efficiencies are design-stage estimates, not measurements. Replace them with '
         + 'bench figures once you have real current and voltage readings.',
-    }),
+    }) : null,
   ].filter(Boolean);
 }
 

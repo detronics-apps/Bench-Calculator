@@ -231,7 +231,20 @@ body {
   }
 
   .brand { flex: 0 1 auto; min-width: 0; overflow: hidden; }
-  .brand__logo { height: 22px; flex: 0 1 auto; min-width: 0; object-fit: contain; object-position: left center; }
+
+  /* The logo sits inside an anchor, so the anchor is the flex item - it has to
+     carry the shrink rules or the image keeps its full intrinsic width and
+     shoves the action buttons over the wordmark. */
+  .brand__home { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+
+  .brand__logo {
+    height: 22px;
+    max-width: 100%;
+    flex: 0 1 auto;
+    min-width: 0;
+    object-fit: contain;
+    object-position: left center;
+  }
 
   .header-actions { flex: 0 0 auto; gap: var(--space-1); }
   .header-actions .btn { padding: 6px 8px; }

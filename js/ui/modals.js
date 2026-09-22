@@ -3,7 +3,7 @@
 import { el, clear } from './dom.js';
 import { markWelcomeSeen } from '../state.js';
 
-export const APP_VERSION = '1.4.1';
+export const APP_VERSION = '1.5.0';
 
 let root = null;
 let lastFocused = null;
@@ -68,6 +68,23 @@ export function openModal({ title, body, footer = [] }) {
 /* ------------------------------------------------------------ changelog */
 
 const CHANGELOG = [
+  {
+    version: '1.5.0',
+    date: '2026-09-22',
+    items: [
+      'A "How to use" tab: search the guide in your own words, step-by-step how-tos and '
+        + 'answers to the common questions.',
+      'Simple, Advanced and Expert. Simple keeps it to the question and the answer; Advanced '
+        + 'adds tolerance, preferred values, the bench list and battery packs; Expert adds the '
+        + 'formula behind every number.',
+      'The logo now links to detronics.co.za, and there is a coffee button if you would like '
+        + 'to support the work.',
+      'The quick start no longer carries the release notes - those live under What’s new - '
+        + 'and it now opens the full guide instead.',
+      'Battery specifications are one panel rather than a column of things that looked '
+        + 'clickable.',
+    ],
+  },
   {
     version: '1.4.1',
     date: '2026-08-27',
@@ -170,14 +187,29 @@ export function openWelcome({ firstVisit = false } = {}) {
             + 'a shareable link, or a printed label sheet.',
         }),
       ]),
-      el('h3', { text: "What's new" }),
-      ...changelogNodes(),
+      el('p', { class: 'muted' }, [
+        'Set how much detail you want with ',
+        el('b', { text: 'Simple / Advanced / Expert' }),
+        ' above the tabs. Expert adds the formula behind every number.',
+      ]),
     ],
     footer: [
       el('label', { class: 'check', style: { marginBottom: '0' } }, [
         dontShow,
         el('span', { text: "Don't show this again" }),
       ]),
+      el('button', {
+        class: 'btn',
+        type: 'button',
+        text: 'Open the full guide',
+        on: {
+          click: () => {
+            if (dontShow.checked) markWelcomeSeen(APP_VERSION);
+            closeModal();
+            document.dispatchEvent(new CustomEvent('goto:tool', { detail: 'guide' }));
+          },
+        },
+      }),
       el('button', {
         class: 'btn btn--primary',
         type: 'button',

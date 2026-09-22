@@ -13,7 +13,7 @@ import {
   mountModals, openWelcome, openChangelog, openLicense, openImprint, APP_VERSION,
 } from './ui/modals.js';
 import {
-  initState, getState, setState, subscribe, toProject, loadProject, welcomeSeen,
+  initState, getState, setState, subscribe, toProject, loadProject, welcomeSeen, MODES,
 } from './state.js';
 import { SERIES_NAMES, SERIES_TOLERANCE } from './eseries.js';
 
@@ -21,8 +21,10 @@ import { colourTool } from './ui/tools/colour.js';
 import { smdTool } from './ui/tools/smd.js';
 import { ledTool } from './ui/tools/led.js';
 import { combineTool } from './ui/tools/combine.js';
+import { guideTool } from './ui/tools/guide.js';
 
-const TOOLS = [colourTool, smdTool, ledTool, combineTool];
+// The guide is last: working tools first, help at the end.
+const TOOLS = [colourTool, smdTool, ledTool, combineTool, guideTool];
 const toolById = (id) => TOOLS.find((t) => t.id === id) || TOOLS[0];
 
 const dom = {};
@@ -83,7 +85,15 @@ function buildHeader() {
 
   return el('header', { class: 'app-header' }, [
     el('div', { class: 'brand' }, [
-      el('img', { class: 'brand__logo', src: 'assets/logo.png', alt: 'Detronics' }),
+      // The logo is the way back to the shop, on every Detronics app.
+      el('a', {
+        class: 'brand__home',
+        href: 'https://www.detronics.co.za/',
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        title: 'Detronics — visit our website',
+        'aria-label': 'Detronics website (opens in a new tab)',
+      }, [el('img', { class: 'brand__logo', src: 'assets/logo.png', alt: 'Detronics' })]),
       el('span', { class: 'brand__sep', 'aria-hidden': 'true' }),
       el('span', { class: 'brand__tool', text: 'Electronics Bench' }),
     ]),
@@ -108,6 +118,16 @@ function buildHeader() {
       }, dualLabel('Load project', 'Load')),
       fileInput,
       themeBtn,
+      // An anchor, not a button, so it can be opened in a new tab or copied.
+      el('a', {
+        class: 'btn btn--ghost btn--icon coffee',
+        href: 'https://buymeacoffee.com/detronics',
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        title: 'Buy me a coffee — support Detronics',
+        'aria-label': 'Buy me a coffee (opens in a new tab)',
+        text: '☕',
+      }),
       el('a', {
         class: 'btn btn--ghost',
         href: 'https://github.com/detronics-apps/Bench-Calculator',
@@ -117,6 +137,14 @@ function buildHeader() {
       }, dualLabel('Source', 'Code')),
     ]),
   ]);
+}
+
+function syncModeBar(state) {
+  if (!dom.modes) return;
+  for (const chip of dom.modes.children) {
+    chip.setAttribute('aria-pressed', String(chip.dataset.mode === state.mode));
+  }
+  dom.modeHint.textContent = MODES.find((m) => m.id === state.mode)?.hint || '';
 }
 
 function syncTheme() {
@@ -129,6 +157,32 @@ function syncTheme() {
 }
 
 /* -------------------------------------------------------------- viewport */
+
+/**
+ * The Simple / Advanced / Expert switch.
+ *
+ * Purely a display filter - it hides controls a beginner has no question for
+ * yet, and adds the teaching panel at the top level. No calculation changes.
+ */
+function buildModeBar() {
+  dom.modes = el('div', { class: 'modebar', role: 'group', 'aria-label': 'How much detail to show' });
+  for (const mode of MODES) {
+    dom.modes.appendChild(el('button', {
+      class: 'chip modebar__chip',
+      type: 'button',
+      dataset: { mode: mode.id },
+      text: mode.name,
+      title: mode.hint,
+      on: {
+        click: () => {
+          setState({ mode: mode.id });
+        },
+      },
+    }));
+  }
+  dom.modeHint = el('span', { class: 'modebar__hint' });
+  return el('div', { class: 'modebar-host' }, [dom.modes, dom.modeHint]);
+}
 
 function buildViewport() {
   dom.tabs = el('div', { class: 'segmented', role: 'tablist', 'aria-label': 'Calculator' });
@@ -151,7 +205,8 @@ function buildViewport() {
     ]));
   }
 
-  return el('section', { class: 'viewport' }, [dom.tabs, dom.stage, dom.readout, dom.banners, dom.explain]);
+  return el('section', { class: 'viewport' },
+    [buildModeBar(), dom.tabs, dom.stage, dom.readout, dom.banners, dom.explain]);
 }
 
 function renderReadout(spec, tool, state) {
@@ -182,6 +237,7 @@ function renderReadout(spec, tool, state) {
 function preferencesSection(state, rerender) {
   return section({
     id: 'prefs',
+    minMode: 'advanced',
     title: 'Preferences',
     summary: state.prefs.eSeries,
     info: 'The E-series decides which values count as "standard" throughout the app: which '
@@ -267,13 +323,16 @@ function renderSidebar(tool, state) {
   clear(dom.sidebar);
   const scroll = el('div', { class: 'sidebar__scroll' });
 
-  for (const node of tool.sections(state, render)) scroll.appendChild(node);
-  scroll.appendChild(preferencesSection(state, render));
-  scroll.appendChild(benchSection(state, render, () => {
+  // A section whose detail level is above the current mode returns null.
+  const add = (node) => { if (node) scroll.appendChild(node); };
+
+  for (const node of tool.sections(state, render)) add(node);
+  add(preferencesSection(state, render));
+  add(benchSection(state, render, () => {
     addToBench(tool.benchItem(getState()));
     render();
   }));
-  scroll.appendChild(exportSection(state, tool));
+  add(exportSection(state, tool));
 
   dom.sidebar.appendChild(scroll);
 }
@@ -287,7 +346,13 @@ function buildFooter() {
       el('button', { class: 'btn btn--ghost btn--small', type: 'button', text: "What's new", on: { click: openChangelog } }),
       el('button', { class: 'btn btn--ghost btn--small', type: 'button', text: 'Licence & terms', on: { click: openLicense } }),
       el('button', { class: 'btn btn--ghost btn--small', type: 'button', text: 'Imprint & privacy', on: { click: openImprint } }),
-      el('button', { class: 'btn btn--ghost btn--small', type: 'button', text: 'Quick start', on: { click: () => openWelcome() } }),
+      el('button', {
+        class: 'btn btn--small',
+        type: 'button',
+        text: 'I am new here',
+        title: 'Show the quick start again',
+        on: { click: () => openWelcome() },
+      }),
       el('span', { class: 'muted', text: `v${APP_VERSION}` }),
     ]),
   ]);
@@ -323,9 +388,27 @@ export function render(opts = {}) {
 
   clear(dom.stage).appendChild(tool.stage(state, render));
   capDiagramScale(dom.stage);
-  renderReadout(tool.readout(state), tool, state);
-  renderBanners(dom.banners, tool.warnings(state, render));
-  renderExplainer(dom.explain, state);
+
+  // The guide is a page, not a calculation: no readout, no banners.
+  const chrome = tool.chrome !== false;
+  dom.readout.hidden = !chrome;
+  dom.banners.hidden = !chrome;
+  if (chrome) {
+    renderReadout(tool.readout(state), tool, state);
+    renderBanners(dom.banners, tool.warnings(state, render));
+  } else {
+    clear(dom.readout);
+    clear(dom.banners);
+  }
+  // Expert is what Expert adds over Advanced: the formulas behind the numbers.
+  if (chrome && state.mode === 'expert') {
+    renderExplainer(dom.explain, state);
+    dom.explain.hidden = false;
+  } else {
+    clear(dom.explain);
+    dom.explain.hidden = true;
+  }
+  syncModeBar(state);
   renderSidebar(tool, state);
   syncTheme();
 
@@ -369,6 +452,9 @@ function boot() {
   render();
 
   // The LED tool's result CTA asks for a bench add without importing main.
+  // The welcome overlay and the guide are the same content at two moments.
+  document.addEventListener('goto:tool', (e) => setState({ tool: e.detail }));
+
   document.addEventListener('bench:add', () => {
     const tool = toolById(getState().tool);
     addToBench(tool.benchItem(getState()));

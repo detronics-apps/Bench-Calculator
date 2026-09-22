@@ -45,6 +45,7 @@ export function benchSection(state, rerender, onAdd) {
 
   return section({
     id: 'bench',
+    minMode: 'advanced',
     title: 'Bench list',
     summary: bench.length ? `${bench.length} saved` : 'empty',
     info: 'A scratch list of components you have worked out. It is saved in this browser '

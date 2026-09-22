@@ -1,7 +1,7 @@
 /** Collapsible sidebar sections. Each carries at most one primary call to action. */
 
 import { el, infoIcon } from './dom.js';
-import { getState, setState } from '../state.js';
+import { getState, setState, MODES } from '../state.js';
 
 const CHEVRON = '<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">'
   + '<path d="M3 1 L7 5 L3 9" fill="none" stroke="currentColor" stroke-width="1.8" '
@@ -20,7 +20,17 @@ const CHEVRON = '<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="tr
  * @param {{label:string, onClick:Function, disabled?:boolean}} [spec.cta]
  */
 export function section(spec) {
-  const { id, title, summary, info, children = [], cta, defaultOpen = true } = spec;
+  const {
+    id, title, summary, info, children = [], cta, defaultOpen = true, minMode = null,
+  } = spec;
+
+  // A section can declare the detail level it belongs to. Simple hides the
+  // controls a beginner has no question for yet; nothing is disabled, only
+  // out of the way, and the value it holds still applies.
+  if (minMode) {
+    const order = MODES.map((m) => m.id);
+    if (order.indexOf(getState().mode) < order.indexOf(minMode)) return null;
+  }
 
   const remembered = getState().openSections[id];
   const open = remembered === undefined ? defaultOpen : remembered;

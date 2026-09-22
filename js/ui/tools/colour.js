@@ -258,11 +258,17 @@ function sections(state, rerender) {
         + '5-band carries a third digit for 1% parts. 6-band adds a temperature coefficient.',
       children: [
         chips(
-          BAND_COUNTS.map((c) => ({
-            value: c,
-            label: `${c}-band`,
-            title: `${sigFigsFor(c)} significant figures`,
-          })),
+          // 3 and 4 band are the ones in a drawer. 5 and 6 carry a third digit
+          // and a temperature coefficient - precision parts, so Advanced. The
+          // current count is always offered, or a resistor arriving on a share
+          // link would have no chip to show it selected.
+          BAND_COUNTS
+            .filter((c) => state.mode !== 'simple' || c <= 4 || c === state.colour.bandCount)
+            .map((c) => ({
+              value: c,
+              label: `${c}-band`,
+              title: `${sigFigsFor(c)} significant figures`,
+            })),
           state.colour.bandCount,
           (v) => { setBandCount(Number(v)); rerender(); },
         ),

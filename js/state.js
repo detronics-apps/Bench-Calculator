@@ -15,10 +15,33 @@ export const TOOLS = ['colour', 'smd', 'led', 'combine'];
 /** Tool state a link may carry. Only the active tool's slice is actually encoded. */
 const SHAREABLE = ['tool', 'colour', 'smd', 'led', 'combine', 'prefs'];
 
+/**
+ * How much of the app to show. The same three levels every Detronics app uses.
+ *
+ * Simple hides the parts a beginner does not yet have a question for; Advanced
+ * shows the lot; Expert adds the "How this works" panel on top of Advanced.
+ * It is a display filter only - nothing here changes a calculation.
+ */
+export const MODES = [
+  { id: 'simple', name: 'Simple', hint: 'Just the answer — type a value, get the part you need.' },
+  { id: 'advanced', name: 'Advanced', hint: 'Every control: tolerance, preferred values, power ratings, battery packs.' },
+  { id: 'expert', name: 'Expert', hint: 'Learn how it works — the formulas behind every number, worked through with your values.' },
+];
+
+/**
+ * Is the app showing at least this much detail?
+ * `atLeast('advanced')` is true in Advanced and Expert, false in Simple.
+ */
+export function atLeast(level, state = getState()) {
+  const order = MODES.map((m) => m.id);
+  return order.indexOf(state.mode) >= order.indexOf(level);
+}
+
 export function defaultState() {
   return {
     tool: 'colour',
     theme: 'system',
+    mode: 'advanced',
 
     prefs: {
       eSeries: 'E24',
