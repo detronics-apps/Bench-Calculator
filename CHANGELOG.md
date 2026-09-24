@@ -3,6 +3,26 @@
 All notable changes to the Detronics Electronics Bench.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.5.1] - 2026-09-25
+
+### Changed
+- The coffee and theme buttons now match the rest of the family: both are 32px
+  discs, and the coffee cup is a line drawing in `currentColor` rather than an
+  emoji. An emoji cup carries its own browns and reds, which belong to no theme
+  this app has; a drawing inherits whatever the button is already using.
+- The theme cycle reads **auto / light / dark** and its title says to set it
+  explicitly before screen-recording - a capture made on "auto" looks different
+  on someone else's machine.
+- `system` now removes `data-theme` instead of setting a third value, which is
+  what lets the `prefers-color-scheme` block take over.
+- The mode bar matches the shared spec: 12px chips, and below 640px the chips
+  grow to fill the row with the hint on its own line.
+
+### Fixed
+- The sun and moon glyphs carry a trailing `U+FE0E`, asking for text
+  presentation. Without it some platforms render them as colour emoji, which
+  ignores the button's colour and looks wrong in one theme or the other.
+
 ## [1.5.0] - 2026-09-22
 
 ### Added

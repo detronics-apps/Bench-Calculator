@@ -40,14 +40,40 @@ function applyTheme(theme) {
 }
 
 function cycleTheme() {
-  const order = ['system', 'light', 'dark'];
-  const next = order[(order.indexOf(getState().theme) + 1) % order.length];
+  const next = THEME_ORDER[(THEME_ORDER.indexOf(getState().theme) + 1) % THEME_ORDER.length];
   setState({ theme: next });
   applyTheme(next);
 }
 
-const THEME_LABEL = { system: 'Theme: system', light: 'Theme: light', dark: 'Theme: dark' };
-const THEME_ICON = { system: '◐', light: '☀', dark: '☾' };
+const THEME_ORDER = ['system', 'light', 'dark'];
+const THEME_LABEL = { system: 'Theme: auto', light: 'Theme: light', dark: 'Theme: dark' };
+/*
+ * Trailing U+FE0E on the sun and moon asks for text presentation. Without
+ * it some platforms render them as colour emoji, which ignores the button's
+ * colour and looks wrong in one theme or the other - the same reason the
+ * coffee cup is drawn rather than typed.
+ */
+const THEME_GLYPH = { system: '◐', light: '☀︎', dark: '☾︎' };
+
+const SITE_URL = 'https://www.detronics.co.za/';
+const COFFEE_URL = 'https://buymeacoffee.com/detronics';
+
+/**
+ * The cup, drawn rather than typed.
+ *
+ * An emoji cup arrives with its own browns and reds baked in, which belong to
+ * no theme this app has. A line drawing in `currentColor` inherits whatever
+ * the button is already using, in light and dark alike.
+ */
+const COFFEE_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" '
+  + 'fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" '
+  + 'stroke-linejoin="round">'
+  + '<path d="M6.5 8 H15.5 V13 A4.5 4.5 0 0 1 6.5 13 Z"/>'
+  + '<path d="M15.5 9.5 h1.8 a2.6 2.6 0 0 1 0 5.2 h-1.8"/>'
+  + '<path d="M4 19.5 Q 11 21.8 18 19.5"/>'
+  + '<path d="M9.3 5.2 q -1.4 -1.1 0 -2.2 q 1.4 -1.1 0 -2.2"/>'
+  + '<path d="M13.3 5.2 q -1.4 -1.1 0 -2.2 q 1.4 -1.1 0 -2.2"/>'
+  + '</svg>';
 
 /* ---------------------------------------------------------------- header */
 
@@ -59,11 +85,11 @@ const dualLabel = (long, short) => [
 
 function buildHeader() {
   const themeBtn = el('button', {
-    class: 'btn btn--ghost btn--icon',
+    class: 'btn btn--icon',
     type: 'button',
     id: 'theme-toggle',
     on: { click: () => { cycleTheme(); syncTheme(); } },
-  });
+  }, [el('span', { class: 'btn__glyph', 'aria-hidden': 'true' })]);
 
   const fileInput = el('input', {
     type: 'file',
@@ -88,7 +114,7 @@ function buildHeader() {
       // The logo is the way back to the shop, on every Detronics app.
       el('a', {
         class: 'brand__home',
-        href: 'https://www.detronics.co.za/',
+        href: SITE_URL,
         target: '_blank',
         rel: 'noopener noreferrer',
         title: 'Detronics — visit our website',
@@ -117,17 +143,17 @@ function buildHeader() {
         on: { click: () => fileInput.click() },
       }, dualLabel('Load project', 'Load')),
       fileInput,
-      themeBtn,
       // An anchor, not a button, so it can be opened in a new tab or copied.
       el('a', {
-        class: 'btn btn--ghost btn--icon coffee',
-        href: 'https://buymeacoffee.com/detronics',
+        class: 'btn btn--icon',
+        href: COFFEE_URL,
         target: '_blank',
         rel: 'noopener noreferrer',
-        title: 'Buy me a coffee — support Detronics',
+        title: 'Buy me a coffee (opens in a new tab)',
         'aria-label': 'Buy me a coffee (opens in a new tab)',
-        text: '☕',
+        html: COFFEE_ICON,
       }),
+      themeBtn,
       el('a', {
         class: 'btn btn--ghost',
         href: 'https://github.com/detronics-apps/Bench-Calculator',
@@ -151,8 +177,10 @@ function syncTheme() {
   const { theme } = getState();
   const btn = $('#theme-toggle');
   if (!btn) return;
-  btn.textContent = THEME_ICON[theme];
-  btn.title = THEME_LABEL[theme];
+  const glyph = btn.querySelector('.btn__glyph');
+  if (glyph) glyph.textContent = THEME_GLYPH[theme];
+  btn.title = `${THEME_LABEL[theme]}. Click to change — system, light or dark. `
+    + 'Set it explicitly before screen-recording.';
   btn.setAttribute('aria-label', THEME_LABEL[theme]);
 }
 

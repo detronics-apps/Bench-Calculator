@@ -3,7 +3,7 @@
 import { el, clear } from './dom.js';
 import { markWelcomeSeen } from '../state.js';
 
-export const APP_VERSION = '1.5.0';
+export const APP_VERSION = '1.5.1';
 
 let root = null;
 let lastFocused = null;
@@ -68,6 +68,15 @@ export function openModal({ title, body, footer = [] }) {
 /* ------------------------------------------------------------ changelog */
 
 const CHANGELOG = [
+  {
+    version: '1.5.1',
+    date: '2026-09-25',
+    items: [
+      'The coffee and theme buttons now match the rest of the Detronics apps, and the '
+        + 'coffee cup is drawn rather than an emoji so it follows the theme colour.',
+      'The theme cycle reads auto, light and dark.',
+    ],
+  },
   {
     version: '1.5.0',
     date: '2026-09-22',

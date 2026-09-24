@@ -45,7 +45,36 @@
 .btn--ghost { background: transparent; border-color: transparent; color: var(--text-dim); }
 .btn--ghost:hover { background: var(--panel-2); }
 
-.btn--icon { padding: 6px; width: 32px; }
+/*
+ * An icon button: a disc with one glyph or one drawing in it.
+ *
+ * For controls whose meaning is carried by the title and the accessible name
+ * rather than a word on the face. Sized from the same minimum as the other
+ * header buttons so the row stays on one baseline.
+ */
+.btn--icon {
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  text-decoration: none;
+}
+
+.btn--icon .btn__glyph {
+  font-size: 15px;
+  line-height: 1;
+  /* The glyphs are the theme discs; they must not inherit the letter-spacing
+     the button text uses. */
+  letter-spacing: 0;
+}
+
+.btn--icon svg { display: block; }
 
 .btn--small { padding: 3px 8px; font-size: 12px; }
 
@@ -629,21 +658,25 @@
 }
 
 /* ------------------------------------------------------------- mode bar */
+/* Its own row, under the header and above the tabs it governs. A control that
+   governs the whole screen has to sit above the whole screen. */
 
-.modebar-host {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-}
-
-.modebar { display: flex; gap: var(--space-1); flex: 0 0 auto; }
+.modebar-host  { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.modebar       { display: flex; gap: var(--space-1); flex: 0 0 auto; }
+.modebar__chip { font-size: 12px; padding: 4px var(--space-3); }
 
 .modebar__hint {
-  font-size: 12px;
-  color: var(--text-faint);
-  flex: 1 1 200px;
+  flex: 1 1 240px;
   min-width: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-faint);
+}
+
+@media (max-width: 640px) {         /* the one place the chips may grow */
+  .modebar { flex: 1 1 100%; }
+  .modebar__chip { flex: 1 1 0; }
+  .modebar__hint { flex: 1 1 100%; }
 }
 
 /* ------------------------------------------------------- brand and coffee */
@@ -657,8 +690,6 @@
 
 .brand__home:hover { opacity: 0.85; }
 
-.coffee { font-size: 15px; line-height: 1; text-decoration: none; }
-.coffee:hover { background: var(--warn-soft); }
 
 /* ------------------------------------------------------------- spec panel */
 /* A spec sheet, not a set of controls: one quiet block, no per-row borders
